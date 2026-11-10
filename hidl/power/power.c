@@ -30,7 +30,7 @@
 
 #include <log/log.h>
 
-#include "power.h"
+#include "power_profiles.h"
 
 #define STATE_ON "state=1"
 

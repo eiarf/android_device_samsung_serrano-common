@@ -17,7 +17,6 @@
 #define LOG_TAG "vendor.lineage.livedisplay@2.0-service.serrano"
 
 #include <android-base/logging.h>
-#include <binder/ProcessState.h>
 #include <hidl/HidlTransportSupport.h>
 
 #include "DisplayColorCalibration.h"
