@@ -23,6 +23,8 @@ $(call inherit-product, vendor/samsung/serrano-common/serrano-common-vendor.mk)
 
 # Soong
 PRODUCT_SOONG_NAMESPACES += $(LOCAL_PATH)
+# lineage-21: SamsungDoze and the IR HAL live in the hardware/samsung namespace
+PRODUCT_SOONG_NAMESPACES += hardware/samsung
 
 # Common overlay
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
@@ -85,7 +87,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/init.qcom.power.rc:recovery/root/init.recovery.qcom.rc \
     $(LOCAL_PATH)/rootdir/init.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.qcom.rc \
     $(LOCAL_PATH)/rootdir/init.qcom.usb.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.qcom.usb.rc \
-    $(LOCAL_PATH)/rootdir/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc
+    $(LOCAL_PATH)/rootdir/etc/init.swap.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.swap.rc \
+    $(LOCAL_PATH)/rootdir/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc
 
 # Etc scripts
 PRODUCT_COPY_FILES += \
@@ -149,7 +152,8 @@ PRODUCT_PACKAGES += \
 
 # Health HAL
 PRODUCT_PACKAGES += \
-    android.hardware.health@2.0-service.serrano
+    android.hardware.health@2.1-impl \
+    android.hardware.health@2.1-service
 
 # Doze
 PRODUCT_PACKAGES += \
@@ -157,7 +161,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    Snap
+    Aperture \
+    Camera2
 
 # FlipFlap
 PRODUCT_PACKAGES += \

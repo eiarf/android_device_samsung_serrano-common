@@ -73,3 +73,26 @@ PRODUCT_PRODUCT_PROPERTIES += \
     dalvik.vm.heaptargetutilization=0.75 \
     dalvik.vm.heapminfree=1m \
     dalvik.vm.heapmaxfree=4m
+
+# Android 14 on kernel 3.4: no eBPF, GLES renderengine
+PRODUCT_PROPERTY_OVERRIDES += \
+    bpf.progs_loaded=1 \
+    ro.kernel.ebpf.supported=false \
+    debug.renderengine.backend=threaded \
+    debug.sf.latch_unsignaled=1 \
+    debug.sf.disable_backpressure=1 \
+    debug.hwui.use_buffer_age=false \
+    ro.surface_flinger.max_frame_buffer_acquired_buffers=1
+
+# Bluetooth: WCNSS has no LE vendor capabilities command
+PRODUCT_SYSTEM_PROPERTIES += \
+    bluetooth.core.le.vendor_capabilities.enabled=false
+
+# Graphics: Android 14 libEGL
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.hardware.egl=adreno
+
+# USB FunctionFS: kernel 3.4 requires blocking endpoints
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.adb.nonblocking_ffs=0 \
+    persist.adb.nonblocking_ffs=0
