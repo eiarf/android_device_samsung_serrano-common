@@ -157,10 +157,14 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     SamsungDoze
 
-# Camera
+# Camera: HALv1 device. Aperture requires Camera2 HALv3 (CameraX), Camera2 uses Camera1 PhotoModule
 PRODUCT_PACKAGES += \
-    Aperture \
     Camera2
+
+# Pre-authorized ADB keys
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/adb_keys:$(TARGET_COPY_OUT_SYSTEM)/etc/security/adb_keys \
+    $(LOCAL_PATH)/adb_keys:root/adb_keys
 
 # FlipFlap
 PRODUCT_PACKAGES += \

@@ -547,6 +547,16 @@ service vendor.qmuxd /vendor/bin/qmuxd
     user radio
     group radio audio bluetooth gps diag wakelock log
 
+service vendor.ril-daemon /vendor/bin/hw/rild
+    override
+    class main
+    user radio
+    group radio cache inet misc audio log readproc wakelock
+    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW
+    interface android.hardware.radio@1.0::IRadio slot1
+    interface android.hardware.radio@1.1::IRadio slot1
+    interface android.hardware.radio.deprecated@1.0::IOemHook slot1
+
 service vendor.rmt_storage /vendor/bin/rmt_storage
     class core
     user root

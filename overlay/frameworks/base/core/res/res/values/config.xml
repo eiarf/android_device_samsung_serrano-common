@@ -247,6 +247,10 @@
     <integer name="config_doubleTapOnHomeBehavior">0</integer>
     <integer name="config_longPressOnHomeBehavior">0</integer>
 
+    <!-- Instant Power key lock: disable camera double-tap timeout -->
+    <bool name="config_cameraDoubleTapPowerGestureEnabled">false</bool>
+    <integer name="config_shortPressOnPowerBehavior">1</integer>
+
     <!-- Disable AOD to avoid panel wake lockup on kernel 3.4 -->
     <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
     <bool name="config_dozeAlwaysOnEnabled">false</bool>
