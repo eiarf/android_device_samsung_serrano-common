@@ -65,6 +65,10 @@ on post-fs-data
     # Create directory used by audio subsystem
     mkdir /data/misc/audio 0770 audio audio
 
+    # Create directories for camera subsystem
+    mkdir /data/misc/camera 0770 camera camera
+    mkdir /data/vendor/camera 0770 camera camera
+
     # Create directory used by radio subsystem
     mkdir /data/radio 0770 radio radio encryption=Require
 
