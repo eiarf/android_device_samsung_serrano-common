@@ -250,4 +250,9 @@
     <!-- Disable AOD to avoid panel wake lockup on kernel 3.4 -->
     <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
     <bool name="config_dozeAlwaysOnEnabled">false</bool>
+
+    <!-- Disable charging sound/vibration feedback to prevent system_server crash on early boot -->
+    <bool name="config_chargingStartedSound_enabled">false</bool>
+    <bool name="config_chargingStartedVibration_enabled">false</bool>
+    <bool name="config_chargingSounds_enabled">false</bool>
 </resources>

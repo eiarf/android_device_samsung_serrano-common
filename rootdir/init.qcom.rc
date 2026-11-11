@@ -529,11 +529,6 @@ service vendor.irsc_util /vendor/bin/irsc_util "/vendor/etc/sec_config"
     user root
     oneshot
 
-service vendor.loc_launcher /vendor/bin/loc_launcher
-    # loc_launcher will start as root and set its uid to gps
-    class late_start
-    group gps inet net_raw diag net_admin wifi
-
 service vendor.qcamerasvr /vendor/bin/mm-qcamera-daemon
     class early_hal
     user camera
@@ -582,9 +577,6 @@ on property:vendor.bluetooth.hciattach=true
 on property:vendor.bluetooth.hciattach=false
     setprop vendor.bluetooth.status off
 
-on property:init.svc.vendor.qcamerasvr=running
-    restart media
-
 on property:ro.data.large_tcp_window_size=true
     # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
     write /proc/sys/net/ipv4/tcp_adv_win_scale  2
@@ -592,9 +584,6 @@ on property:ro.data.large_tcp_window_size=true
 on property:sys.boot_completed=1
     start vendor.qcom-audio
     restart vendor.qcamerasvr
-
-    exec u:r:vendor_init:s0 -- /vendor/bin/dumpsys deviceidle whitelist +com.android.deskclock
-    exec u:r:vendor_init:s0 -- /vendor/bin/dumpsys deviceidle whitelist +com.android.messaging
 
     # Symlink telephony.db and preferred-apn.xml
     mkdir /data/data/com.android.providers.telephony/databases 0700 radio radio
