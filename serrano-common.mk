@@ -167,8 +167,9 @@ PRODUCT_PACKAGES += \
     FlipFlap
 
 # Telephony
-PRODUCT_PACKAGES += \
-    libsecnativefeature
+# libsecnativefeature is copied via PRODUCT_COPY_FILES in serrano-common-vendor.mk
+# PRODUCT_PACKAGES += \
+#     libsecnativefeature
 
 # Shims
 PRODUCT_PACKAGES += \
