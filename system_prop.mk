@@ -3,10 +3,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.android.mobiledata=false \
     ro.ril.telephony.qan_resp_strings=6 \
     persist.data.qmi.adb_logmask=0 \
-    persist.radio.add_power_save=1
+    persist.radio.add_power_save=1 \
+    persist.radio.apm_sim_not_pwdn=1 \
+    persist.radio.no_wait_for_card=1
 
 # GPS
 PRODUCT_PROPERTY_OVERRIDES += \
+    persist.gps.qc_nlp_in_use=1 \
     ro.gps.agps_provider=1
 
 # Media
@@ -23,6 +26,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.composition.type=c2d \
+    debug.hwui.use_buffer_age=false \
+    debug.sf.enable_gl_backpressure=1 \
     ro.sf.lcd_density=240 \
     ro.opengles.version=196608 \
     ro.qualcomm.cabl=0 \
@@ -30,7 +35,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
-    camera2.portability.force_api=1
+    camera2.portability.force_api=1 \
+    debug.camcorder.disablemeta=true
 
 # Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -75,7 +81,18 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.renderengine.backend=threaded \
     debug.sf.latch_unsignaled=1 \
     debug.sf.disable_backpressure=1 \
+    debug.hwui.use_buffer_age=false \
     ro.surface_flinger.max_frame_buffer_acquired_buffers=1
+
+# Android Go Low RAM
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.low_ram=true \
+    ro.config.avoid_gfx_accel=true
+
+# ADB
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.adb.secure=0 \
+    persist.sys.usb.config=mtp,adb
 
 # Bluetooth: WCNSS has no LE vendor capabilities command
 PRODUCT_SYSTEM_PROPERTIES += \

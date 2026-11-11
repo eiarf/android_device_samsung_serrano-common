@@ -538,6 +538,7 @@ service vendor.qcamerasvr /vendor/bin/mm-qcamera-daemon
     class early_hal
     user camera
     group camera system inet input graphics
+    setenv LIBC_DEBUG_MALLOC_OPTIONS front_guard=16
 
 service vendor.qcom-audio /vendor/bin/init.qcom.audio.sh
     class late_start
@@ -557,7 +558,7 @@ service vendor.rmt_storage /vendor/bin/rmt_storage
     group system wakelock
     shutdown critical
 
-service vendor.wcnss-service /vendor/bin/wcnss_service
+service wcnss-service /system/bin/wcnss_service
     class main
     user system
     group system wifi radio
@@ -581,12 +582,16 @@ on property:vendor.bluetooth.hciattach=true
 on property:vendor.bluetooth.hciattach=false
     setprop vendor.bluetooth.status off
 
+on property:init.svc.vendor.qcamerasvr=running
+    restart media
+
 on property:ro.data.large_tcp_window_size=true
     # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
     write /proc/sys/net/ipv4/tcp_adv_win_scale  2
 
 on property:sys.boot_completed=1
     start vendor.qcom-audio
+    restart vendor.qcamerasvr
 
     exec u:r:vendor_init:s0 -- /vendor/bin/dumpsys deviceidle whitelist +com.android.deskclock
     exec u:r:vendor_init:s0 -- /vendor/bin/dumpsys deviceidle whitelist +com.android.messaging

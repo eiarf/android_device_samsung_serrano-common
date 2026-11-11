@@ -167,7 +167,8 @@ PRODUCT_PACKAGES += \
     FlipFlap
 
 # Telephony
-# PRODUCT_PACKAGES += libsecnativefeature
+PRODUCT_PACKAGES += \
+    libsecnativefeature
 
 # Shims
 PRODUCT_PACKAGES += \

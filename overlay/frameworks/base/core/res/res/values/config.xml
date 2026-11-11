@@ -248,4 +248,12 @@
     <!-- If device supports corner radius on windows.
          This should be turned off on low-end devices to improve animation performance. -->
     <bool name="config_supportsRoundedCornersOnWindows">false</bool>
+
+    <!-- Immediate Home key response (remove double-tap delay) -->
+    <integer name="config_doubleTapOnHomeBehavior">0</integer>
+    <integer name="config_longPressOnHomeBehavior">0</integer>
+
+    <!-- Disable AOD to avoid panel wake lockup on kernel 3.4 -->
+    <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
+    <bool name="config_dozeAlwaysOnEnabled">false</bool>
 </resources>
