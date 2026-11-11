@@ -45,7 +45,7 @@ on property:sys.usb.config=adb
     write /sys/class/android_usb/android0/idProduct 6860
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=mtp
@@ -63,7 +63,7 @@ on property:sys.usb.config=mtp,adb
     write /sys/class/android_usb/android0/idProduct 6860
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=ptp
@@ -81,7 +81,7 @@ on property:sys.usb.config=ptp,adb
     write /sys/class/android_usb/android0/idProduct 6866
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=rndis
@@ -99,7 +99,7 @@ on property:sys.usb.config=rndis,adb
     write /sys/class/android_usb/android0/idProduct 6864
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 # For CDFS composite
@@ -118,7 +118,7 @@ on property:sys.usb.config=mass_storage,adb
     write /sys/class/android_usb/android0/idProduct 685E
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=mass_storage,mtp
@@ -136,7 +136,7 @@ on property:sys.usb.config=mass_storage,mtp,adb
     write /sys/class/android_usb/android0/idProduct 6860
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
 
 # USB midi configuration
@@ -156,5 +156,5 @@ on property:sys.usb.config=midi,adb
     write /sys/class/android_usb/android0/idProduct 4EE9
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
-    start adbd
+    restart adbd
     setprop sys.usb.state ${sys.usb.config}
