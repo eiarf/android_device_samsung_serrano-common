@@ -80,8 +80,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.kernel.ebpf.supported=false \
     debug.renderengine.backend=threaded \
     debug.sf.latch_unsignaled=1 \
-    debug.sf.disable_backpressure=1 \
-    debug.hwui.use_buffer_age=false \
     ro.surface_flinger.max_frame_buffer_acquired_buffers=1
 
 # Android Go Low RAM
