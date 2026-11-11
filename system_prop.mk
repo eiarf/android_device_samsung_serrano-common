@@ -1,3 +1,8 @@
+# RIL (Vendor)
+PRODUCT_VENDOR_PROPERTIES += \
+    rild.libpath=/vendor/lib/libsec-ril.so \
+    vendor.rild.libpath=/vendor/lib/libsec-ril.so
+
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.android.mobiledata=false \
@@ -15,7 +20,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     audio.offload.disable=1 \
-    debug.stagefright.ccodec=0 \
+    debug.stagefright.ccodec=4 \
     persist.vendor.audio.fluence.speaker=true \
     persist.vendor.audio.fluence.voicecall=true \
     ro.vendor.audio.sdk.fluencetype=fluence \
