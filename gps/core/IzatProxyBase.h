@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,50 +26,35 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#ifndef IZAT_PROXY_BASE_H
+#define IZAT_PROXY_BASE_H
 
-#ifndef LOC_ADAPTER_PROXY_BASE_H
-#define LOC_ADAPTER_PROXY_BASE_H
-
-#include <ContextBase.h>
 #include <gps_extended.h>
+#include <MsgTask.h>
 
 namespace loc_core {
 
-class LocAdapterProxyBase {
-private:
-    LocAdapterBase *mLocAdapterBase;
+class LocApiBase;
+class LocAdapterBase;
+
+class IzatProxyBase {
+    friend class ContextBase;
+    inline virtual LocApiBase*
+        getLocApi(const MsgTask* msgTask,
+                  LOC_API_ADAPTER_EVENT_MASK_T exMask) const {
+        return NULL;
+    }
 protected:
-    inline LocAdapterProxyBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                   ContextBase* context):
-                   mLocAdapterBase(new LocAdapterBase(mask, context, this)) {
-    }
-    inline virtual ~LocAdapterProxyBase() {
-        delete mLocAdapterBase;
-    }
-    inline void updateEvtMask(LOC_API_ADAPTER_EVENT_MASK_T event,
-                              loc_registration_mask_status isEnabled) {
-        mLocAdapterBase->updateEvtMask(event,isEnabled);
-    }
-
+    inline IzatProxyBase() {}
 public:
-    inline ContextBase* getContext() const {
-        return mLocAdapterBase->getContext();
-    }
-    inline virtual void handleEngineUpEvent() {};
-    inline virtual void handleEngineDownEvent() {};
-    inline virtual bool reportPosition(UlpLocation &location,
-                                       GpsLocationExtended &locationExtended,
-                                       enum loc_sess_status status,
-                                       LocPosTechMask loc_technology_mask) {
-
-        (void)location;
-        (void)locationExtended;
-        (void)status;
-        (void)loc_technology_mask;
-        return false;
-    }
+    inline virtual ~IzatProxyBase() {}
+    inline virtual void requestUlp(LocAdapterBase* adapter,
+                                   unsigned long capabilities) const {}
+    inline virtual bool hasAgpsExt() const { return false; }
 };
+
+typedef IzatProxyBase* (getIzatProxy_t)();
 
 } // namespace loc_core
 
-#endif //LOC_ADAPTER_PROXY_BASE_H
+#endif // IZAT_PROXY_BASE_H

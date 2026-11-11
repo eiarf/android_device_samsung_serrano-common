@@ -8,14 +8,16 @@ LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SHARED_LIBRARIES := \
-    liblog \
     libutils \
+    liblog \
     libcutils \
     libgps.utils \
     libdl \
-    libprocessgroup
+    libprocessgroup \
+    libhardware
 
 LOCAL_SRC_FILES += \
+    MsgTask.cpp \
     LocApiBase.cpp \
     LocAdapterBase.cpp \
     ContextBase.cpp \
@@ -29,6 +31,7 @@ LOCAL_CFLAGS += \
      -Wno-unused-parameter
 
 LOCAL_HEADER_LIBRARIES := \
+    libhardware_headers \
     libgps.utils_headers
 
 include $(BUILD_SHARED_LIBRARY)

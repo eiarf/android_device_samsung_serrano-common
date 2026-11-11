@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,54 +33,56 @@
 #include <LocAdapterBase.h>
 #include <loc_target.h>
 #include <log_util.h>
-#include <LocAdapterProxyBase.h>
 
 namespace loc_core {
+
+struct LocOpenMsg : public LocMsg {
+    LocAdapterBase* mLocAdapter;
+    LocApiBase* mLocApi;
+    inline LocOpenMsg(LocAdapterBase* locAdapter,
+                      LocApiBase* locApi) :
+        LocMsg(), mLocAdapter(locAdapter), mLocApi(locApi)
+    {
+        locallog();
+    }
+    inline virtual void proc() const {
+        mLocApi->addAdapter(mLocAdapter);
+    }
+    inline void locallog() {
+        LOC_LOGV("LocOpen");
+    }
+    using LocMsg::log;
+    inline virtual void log() {
+        locallog();
+    }
+};
 
 // This is the top level class, so the constructor will
 // always gets called. Here we prepare for the default.
 // But if getLocApi(targetEnumType target) is overriden,
 // the right locApi should get created.
 LocAdapterBase::LocAdapterBase(const LOC_API_ADAPTER_EVENT_MASK_T mask,
-                               ContextBase* context, LocAdapterProxyBase *adapterProxyBase) :
+                               ContextBase* context) :
     mEvtMask(mask), mContext(context),
-    mLocApi(context->getLocApi()), mLocAdapterProxyBase(adapterProxyBase),
-    mMsgTask(context->getMsgTask())
+    mLocApi(context->getLocApi()), mMsgTask(context->getMsgTask())
 {
-    mLocApi->addAdapter(this);
+    sendMsg(new LocOpenMsg(this, mLocApi));
 }
 
-void LocAdapterBase::handleEngineUpEvent()
-{
-    if (mLocAdapterProxyBase) {
-        mLocAdapterProxyBase->handleEngineUpEvent();
-    }
-}
-
-void LocAdapterBase::handleEngineDownEvent()
-{
-    if (mLocAdapterProxyBase) {
-        mLocAdapterProxyBase->handleEngineDownEvent();
-    }
-}
+void LocAdapterBase::
+    handleEngineDownEvent()
+DEFAULT_IMPL()
 
 void LocAdapterBase::
     reportPosition(UlpLocation &location,
                    GpsLocationExtended &locationExtended,
                    void* locationExt,
                    enum loc_sess_status status,
-                   LocPosTechMask loc_technology_mask) {
-    if (mLocAdapterProxyBase == NULL ||
-        !mLocAdapterProxyBase->reportPosition(location,
-                                              locationExtended,
-                                              status,
-                                              loc_technology_mask)) {
-        DEFAULT_IMPL()
-    }
-}
+                   LocPosTechMask loc_technology_mask)
+DEFAULT_IMPL()
 
 void LocAdapterBase::
-    reportSv(HaxxSvStatus &svStatus,
+    reportSv(GpsSvStatus &svStatus,
              GpsLocationExtended &locationExtended,
              void* svExt)
 DEFAULT_IMPL()
@@ -135,8 +137,4 @@ DEFAULT_IMPL(false)
 bool LocAdapterBase::
     requestNiNotify(GpsNiNotification &notify, const void* data)
 DEFAULT_IMPL(false)
-
-void LocAdapterBase::
-    reportGpsMeasurementData(GpsData &gpsMeasurementData)
-DEFAULT_IMPL()
 } // namespace loc_core

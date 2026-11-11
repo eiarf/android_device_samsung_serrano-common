@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2013,2015 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,40 +36,53 @@
 #include <log_util.h>
 #include <loc_log.h>
 
+namespace loc_core {
+
+#define MAX_TASK_COMM_LEN 15
+
 static void LocMsgDestroy(void* msg) {
     delete (LocMsg*)msg;
 }
 
-MsgTask::MsgTask(LocThread::tCreate tCreator,
-                 const char* threadName, bool joinable) :
-    mQ(msg_q_init2()), mThread(new LocThread()) {
-    if (!mThread->start(tCreator, threadName, this, joinable)) {
-        delete mThread;
-        mThread = NULL;
+MsgTask::MsgTask(tCreate tCreator, const char* threadName) :
+    mQ(msg_q_init2()), mAssociator(NULL){
+    if (tCreator) {
+        tCreator(threadName, loopMain,
+                 (void*)new MsgTask(mQ, mAssociator));
+    } else {
+        createPThread(threadName);
     }
 }
 
-MsgTask::MsgTask(const char* threadName, bool joinable) :
-    mQ(msg_q_init2()), mThread(new LocThread()) {
-    if (!mThread->start(threadName, this, joinable)) {
-        delete mThread;
-        mThread = NULL;
-    }
+MsgTask::MsgTask(tAssociate tAssociator, const char* threadName) :
+    mQ(msg_q_init2()), mAssociator(tAssociator){
+    createPThread(threadName);
+}
+
+inline
+MsgTask::MsgTask(const void* q, tAssociate associator) :
+    mQ(q), mAssociator(associator){
 }
 
 MsgTask::~MsgTask() {
-    msg_q_flush((void*)mQ);
-    msg_q_destroy((void**)&mQ);
+    msg_q_unblock((void*)mQ);
 }
 
-void MsgTask::destroy() {
-    LocThread* thread = mThread;
-    msg_q_unblock((void*)mQ);
-    if (thread) {
-        mThread = NULL;
-        delete thread;
-    } else {
-        delete this;
+void MsgTask::createPThread(const char* threadName) {
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+    pthread_t tid;
+    // create the thread here, then if successful
+    // and a name is given, we set the thread name
+    if (!pthread_create(&tid, &attr, loopMain,
+                        (void*)new MsgTask(mQ, mAssociator)) &&
+        NULL != threadName) {
+        char lname[MAX_TASK_COMM_LEN+1];
+        memcpy(lname, threadName, MAX_TASK_COMM_LEN);
+        lname[MAX_TASK_COMM_LEN] = 0;
+        pthread_setname_np(tid, lname);
     }
 }
 
@@ -77,26 +90,43 @@ void MsgTask::sendMsg(const LocMsg* msg) const {
     msg_q_snd((void*)mQ, (void*)msg, LocMsgDestroy);
 }
 
-void MsgTask::prerun() {
+void* MsgTask::loopMain(void* arg) {
+    MsgTask* copy = (MsgTask*)arg;
+
     // make sure we do not run in background scheduling group
     set_sched_policy(gettid(), SP_FOREGROUND);
-}
 
-bool MsgTask::run() {
-    LOC_LOGV("MsgTask::loop() listening ...\n");
-    LocMsg* msg;
-    msq_q_err_type result = msg_q_rcv((void*)mQ, (void **)&msg);
-    if (eMSG_Q_SUCCESS != result) {
-        LOC_LOGE("%s:%d] fail receiving msg: %s\n", __func__, __LINE__,
-                 loc_get_msg_q_status(result));
-        return false;
+    if (NULL != copy->mAssociator) {
+        copy->mAssociator();
     }
 
-    msg->log();
-    // there is where each individual msg handling is invoked
-    msg->proc();
+    LocMsg* msg;
+    int cnt = 0;
 
-    delete msg;
+    while (1) {
+        LOC_LOGD("MsgTask::loop() %d listening ...\n", cnt++);
 
-    return true;
+        msq_q_err_type result = msg_q_rcv((void*)copy->mQ, (void **)&msg);
+
+        if (eMSG_Q_SUCCESS != result) {
+            LOC_LOGE("%s:%d] fail receiving msg: %s\n", __func__, __LINE__,
+                     loc_get_msg_q_status(result));
+            // destroy the Q and exit
+            msg_q_destroy((void**)&(copy->mQ));
+            delete copy;
+            return NULL;
+        }
+
+        msg->log();
+        // there is where each individual msg handling is invoked
+        msg->proc();
+
+        delete msg;
+    }
+
+    delete copy;
+
+    return NULL;
+}
+
 }

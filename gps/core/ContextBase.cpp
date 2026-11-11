@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,43 +40,21 @@
 
 namespace loc_core {
 
-loc_gps_cfg_s_type ContextBase::mGps_conf {};
-loc_sap_cfg_s_type ContextBase::mSap_conf {};
 
-uint32_t ContextBase::getCarrierCapabilities() {
-    #define carrierMSA (uint32_t)0x2
-    #define carrierMSB (uint32_t)0x1
-    #define gpsConfMSA (uint32_t)0x4
-    #define gpsConfMSB (uint32_t)0x2
-    uint32_t capabilities = mGps_conf.CAPABILITIES;
-    if ((mGps_conf.SUPL_MODE & carrierMSA) != carrierMSA) {
-        capabilities &= ~gpsConfMSA;
-    }
-    if ((mGps_conf.SUPL_MODE & carrierMSB) != carrierMSB) {
-        capabilities &= ~gpsConfMSB;
-    }
-
-    LOC_LOGV("getCarrierCapabilities: CAPABILITIES %x, SUPL_MODE %x, carrier capabilities %x",
-             mGps_conf.CAPABILITIES, mGps_conf.SUPL_MODE, capabilities);
-    return capabilities;
-}
-
-LBSProxyBase* ContextBase::getLBSProxy(const char* libName)
+IzatProxyBase* ContextBase::getIzatProxy(const char* libName)
 {
-    LBSProxyBase* proxy = NULL;
-    LOC_LOGD("%s:%d]: getLBSProxy libname: %s\n", __func__, __LINE__, libName);
+    IzatProxyBase* proxy = NULL;
     void* lib = dlopen(libName, RTLD_NOW);
 
     if ((void*)NULL != lib) {
-        getLBSProxy_t* getter = (getLBSProxy_t*)dlsym(lib, "getLBSProxy");
+        getIzatProxy_t* getter = (getIzatProxy_t*)dlsym(lib, "getIzatProxy");
         if (NULL != getter) {
             proxy = (*getter)();
         }
     }
     if (NULL == proxy) {
-        proxy = new LBSProxyBase();
+        proxy = new IzatProxyBase();
     }
-    LOC_LOGD("%s:%d]: Exiting\n", __func__, __LINE__);
     return proxy;
 }
 
@@ -85,8 +63,8 @@ LocApiBase* ContextBase::createLocApi(LOC_API_ADAPTER_EVENT_MASK_T exMask)
     LocApiBase* locApi = NULL;
 
     // first if can not be MPQ
-    if (TARGET_MPQ != loc_get_target()) {
-        if (NULL == (locApi = mLBSProxy->getLocApi(mMsgTask, exMask, this))) {
+    if (TARGET_MPQ != get_target()) {
+        if (NULL == (locApi = mIzatProxy->getLocApi(mMsgTask, exMask))) {
             void *handle = NULL;
             //try to see if LocApiV02 is present
             if((handle = dlopen("libloc_api_v02.so", RTLD_NOW)) != NULL) {
@@ -94,7 +72,7 @@ LocApiBase* ContextBase::createLocApi(LOC_API_ADAPTER_EVENT_MASK_T exMask)
                 getLocApi_t* getter = (getLocApi_t*)dlsym(handle, "getLocApi");
                 if(getter != NULL) {
                     LOC_LOGD("%s:%d]: getter is not NULL for LocApiV02", __func__, __LINE__);
-                    locApi = (*getter)(mMsgTask, exMask, this);
+                    locApi = (*getter)(mMsgTask,exMask);
                 }
             }
             // only RPC is the option now
@@ -106,7 +84,7 @@ LocApiBase* ContextBase::createLocApi(LOC_API_ADAPTER_EVENT_MASK_T exMask)
                     getLocApi_t* getter = (getLocApi_t*)dlsym(handle, "getLocApi");
                     if (NULL != getter) {
                         LOC_LOGD("%s:%d]: getter is not NULL in RPC", __func__, __LINE__);
-                        locApi = (*getter)(mMsgTask, exMask, this);
+                        locApi = (*getter)(mMsgTask, exMask);
                     }
                 }
             }
@@ -116,7 +94,7 @@ LocApiBase* ContextBase::createLocApi(LOC_API_ADAPTER_EVENT_MASK_T exMask)
     // locApi could still be NULL at this time
     // we would then create a dummy one
     if (NULL == locApi) {
-        locApi = new LocApiBase(mMsgTask, exMask, this);
+        locApi = new LocApiBase(mMsgTask, exMask);
     }
 
     return locApi;
@@ -125,10 +103,9 @@ LocApiBase* ContextBase::createLocApi(LOC_API_ADAPTER_EVENT_MASK_T exMask)
 ContextBase::ContextBase(const MsgTask* msgTask,
                          LOC_API_ADAPTER_EVENT_MASK_T exMask,
                          const char* libName) :
-    mLBSProxy(getLBSProxy(libName)),
+    mIzatProxy(getIzatProxy(libName)),
     mMsgTask(msgTask),
-    mLocApi(createLocApi(exMask)),
-    mLocApiProxy(mLocApi->getLocApiProxy())
+    mLocApi(createLocApi(exMask))
 {
 }
 

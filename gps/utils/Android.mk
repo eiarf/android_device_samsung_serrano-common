@@ -6,8 +6,7 @@ include $(CLEAR_VARS)
 LOCAL_SHARED_LIBRARIES := \
     libutils \
     libcutils \
-    liblog \
-    libprocessgroup
+    liblog
 
 LOCAL_SRC_FILES += \
     loc_log.cpp \
@@ -15,14 +14,10 @@ LOCAL_SRC_FILES += \
     msg_q.c \
     linked_list.c \
     loc_target.cpp \
-    platform_lib_abstractions/elapsed_millis_since_boot.cpp \
-    LocHeap.cpp \
-    LocTimer.cpp \
-    LocThread.cpp \
-    MsgTask.cpp \
-    loc_misc_utils.cpp
+    loc_timer.c \
+    ../platform_lib_abstractions/elapsed_millis_since_boot.cpp
 
-# Flag -std=c++11 is not accepted by compiler when LOCAL_CLANG is set to true
+
 LOCAL_CFLAGS += \
      -fno-short-enums \
      -D_ANDROID_ \
@@ -30,14 +25,10 @@ LOCAL_CFLAGS += \
      -Wno-format \
      -Wno-unused-parameter
 
-ifeq ($(TARGET_BUILD_VARIANT),user)
-   LOCAL_CFLAGS += -DTARGET_BUILD_VARIANT_USER
-endif
-
 LOCAL_LDFLAGS += -Wl,--export-dynamic
 
-## Includes
 LOCAL_HEADER_LIBRARIES := \
+    libhardware_headers \
     libgps.utils_headers
 
 LOCAL_MODULE := libgps.utils
@@ -51,5 +42,5 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libgps.utils_headers
 LOCAL_EXPORT_C_INCLUDE_DIRS := \
     $(LOCAL_PATH) \
-    $(LOCAL_PATH)/platform_lib_abstractions
+    $(LOCAL_PATH)/../platform_lib_abstractions
 include $(BUILD_HEADER_LIBRARY)

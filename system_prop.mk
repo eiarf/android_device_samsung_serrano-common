@@ -23,8 +23,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.composition.type=c2d \
-    debug.hwui.use_buffer_age=false \
-    debug.sf.enable_gl_backpressure=1 \
     ro.sf.lcd_density=240 \
     ro.opengles.version=196608 \
     ro.qualcomm.cabl=0 \
@@ -57,10 +55,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.lineage.build.vendor_security_patch=2016-08-01
 
-# Set default locale
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.product.locale=en-GB
-
 # Charger
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.charger.enable_suspend=true
@@ -81,7 +75,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.renderengine.backend=threaded \
     debug.sf.latch_unsignaled=1 \
     debug.sf.disable_backpressure=1 \
-    debug.hwui.use_buffer_age=false \
     ro.surface_flinger.max_frame_buffer_acquired_buffers=1
 
 # Bluetooth: WCNSS has no LE vendor capabilities command

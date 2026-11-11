@@ -116,10 +116,8 @@ PRODUCT_COPY_FILES += \
 
 # GPS HAL
 PRODUCT_PACKAGES += \
-    gps.msm8960 \
-    flp.conf \
     gps.conf \
-    izat.conf \
+    gps.msm8960 \
     sap.conf
 
 # IR package
@@ -169,8 +167,7 @@ PRODUCT_PACKAGES += \
     FlipFlap
 
 # Telephony
-PRODUCT_PACKAGES += \
-    libsecnativefeature
+# PRODUCT_PACKAGES += libsecnativefeature
 
 # Shims
 PRODUCT_PACKAGES += \

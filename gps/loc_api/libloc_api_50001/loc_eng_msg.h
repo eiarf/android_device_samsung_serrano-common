@@ -105,11 +105,11 @@ struct LocEngReportPosition : public LocMsg {
 
 struct LocEngReportSv : public LocMsg {
     LocAdapterBase* mAdapter;
-    const HaxxSvStatus mSvStatus;
+    const GpsSvStatus mSvStatus;
     const GpsLocationExtended mLocationExtended;
     const void* mSvExt;
     LocEngReportSv(LocAdapterBase* adapter,
-                   HaxxSvStatus &sv,
+                   GpsSvStatus &sv,
                    GpsLocationExtended &locExtended,
                    void* svExtended);
     virtual void proc() const;
@@ -119,9 +119,9 @@ struct LocEngReportSv : public LocMsg {
 };
 
 struct LocEngReportStatus : public LocMsg {
-    LocAdapterBase* mAdapter;
+    void* mLocEng;
     const GpsStatusValue mStatus;
-    LocEngReportStatus(LocAdapterBase* adapter,
+    LocEngReportStatus(void* locEng,
                        GpsStatusValue engineStatus);
     virtual void proc() const;
     void locallog() const;
@@ -280,24 +280,6 @@ struct LocEngUp : public LocMsg {
     virtual void log() const;
 };
 
-struct LocEngGetZpp : public LocMsg {
-    LocEngAdapter* mAdapter;
-    LocEngGetZpp(LocEngAdapter* adapter);
-    virtual void proc() const;
-    void locallog() const;
-    virtual void log() const;
-    void send() const;
-};
-
-struct LocEngReportGpsMeasurement : public LocMsg {
-    void* mLocEng;
-    const GpsData mGpsData;
-    LocEngReportGpsMeasurement(void* locEng,
-                               GpsData &gpsData);
-    virtual void proc() const;
-    void locallog() const;
-    virtual void log() const;
-};
 
 #ifdef __cplusplus
 }
