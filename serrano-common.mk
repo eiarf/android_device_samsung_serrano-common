@@ -184,7 +184,9 @@ PRODUCT_PACKAGES += \
 
 # Shims
 PRODUCT_PACKAGES += \
-    libshim_binder
+    libshim_binder \
+    libsecnativefeature \
+    libqc-opt
 
 # call common serrano system props
 $(call inherit-product, $(LOCAL_PATH)/system_prop.mk)
